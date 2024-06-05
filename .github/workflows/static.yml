@@ -24,6 +24,7 @@ concurrency:
 jobs:
   # Single deploy job since we're just deploying
   Sanity-Check:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -31,13 +32,19 @@ jobs:
         uses: wjdp/htmltest-action@master
         with:
           path: index.html
-  Test:
+  Testing:
+    needs: Sanity-Check
+    runs-on: ubuntu-latest
+    steps:
       - name: Checkout
         uses: actions/checkout@v4
-  Security:
-      - name: Checkout
-        uses: actions/checkout@v4
+  # Security:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
   Deployment:
+    needs: Testing
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
